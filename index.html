@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ImageKoTranslator · 영문 지도·도표 한글화 편집기</title>
+<meta name="description" content="ISW·싱크탱크의 영문 지도·도표·인포그래픽과 PDF 페이지를 한글로 바꿔 주는 Windows 설치형 편집기. 무료 OCR로 글자를 찾고, 문단 단위로 번역한 뒤, 사람이 검수·수정해 원본 형태 그대로 저장합니다.">
+<meta property="og:title" content="ImageKoTranslator · 영문 지도·도표 한글화 편집기">
+<meta property="og:description" content="영문 지도·도표의 글자만 한글로 바꾸고 나머지는 원본 그대로. 무료 OCR + 무료 번역 + 수작업 검수.">
+<meta property="og:image" content="img/overview_after.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b2f45; --navy2:#123d58; --ink:#1b2430; --sub:#5b6773; --line:#dfe4ea;
+  --bg:#f4f6f8; --card:#ffffff; --accent:#c8423b; --gold:#b08d57; --ok:#1f8a4c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Malgun Gothic",system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+header.top{background:var(--navy);color:#fff}
+header.top .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+.brand{font-weight:900;letter-spacing:.2px}
+.brand span{color:var(--gold);font-weight:700;margin-left:6px;font-size:.85em}
+nav a{color:#cfe0ec;text-decoration:none;margin-left:18px;font-size:.92rem}
+nav a:hover{color:#fff}
+.hero{background:linear-gradient(160deg,var(--navy) 0,var(--navy2) 100%);color:#fff;padding:44px 0 48px}
+.hero-grid{display:grid;grid-template-columns:1fr 1.25fr;gap:36px;align-items:center}
+.eyebrow{display:inline-block;font-size:.8rem;font-weight:700;color:var(--navy);background:#e9d9bd;border-radius:3px;padding:3px 9px;letter-spacing:.3px}
+h1{font-size:2.35rem;line-height:1.25;margin:14px 0 12px;font-weight:900;letter-spacing:-.5px}
+.lead{color:#d6e3ec;font-size:1.05rem;margin:0 0 22px}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:6px;font-weight:700;text-decoration:none;font-size:.95rem;border:1px solid transparent}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.primary:hover{background:#b1352e}
+.btn.ghost{border-color:#8fb0c6;color:#fff}
+.btn.ghost:hover{background:rgba(255,255,255,.08)}
+.meta{margin-top:14px;font-size:.82rem;color:#a9c0d0}
+
+/* before/after */
+.compare-card{background:var(--card);border-radius:10px;box-shadow:0 12px 32px rgba(11,47,69,.25);overflow:hidden}
+.tabs{display:flex;border-bottom:1px solid var(--line);background:#fafbfc}
+.tabs button{flex:1;border:0;background:none;padding:10px 6px;font:inherit;font-size:.86rem;color:var(--sub);cursor:pointer;border-bottom:3px solid transparent}
+.tabs button[aria-selected="true"]{color:var(--navy);font-weight:700;border-bottom-color:var(--accent)}
+.tabs button:focus-visible,.btn:focus-visible,input[type=range]:focus-visible{outline:3px solid #f0b429;outline-offset:2px}
+.ba{position:relative;user-select:none;background:#e9edf1;touch-action:pan-y}
+.ba img{display:block;width:100%;height:auto;max-height:560px;object-fit:contain;background:#e9edf1}
+.ba .before{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--pos,50%)) 0 0)}
+.ba .handle{position:absolute;top:0;bottom:0;left:var(--pos,50%);width:3px;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);transform:translateX(-1.5px);pointer-events:none}
+.ba .handle::after{content:"◀ ▶";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--accent);color:#fff;font-size:11px;padding:6px 8px;border-radius:20px;white-space:nowrap;letter-spacing:2px}
+.ba .tag{position:absolute;top:10px;font-size:.75rem;font-weight:700;padding:3px 8px;border-radius:3px;color:#fff}
+.ba .tag.l{left:10px;background:rgba(11,47,69,.85)}
+.ba .tag.r{right:10px;background:rgba(200,66,59,.9)}
+.ba input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.cap{font-size:.8rem;color:var(--sub);padding:9px 14px;border-top:1px solid var(--line);background:#fafbfc}
+
+section{padding:56px 0}
+h2{font-size:1.6rem;margin:0 0 6px;font-weight:900;letter-spacing:-.3px}
+.sec-sub{color:var(--sub);margin:0 0 26px}
+.problem{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px}
+.pcard h3{margin:0 0 8px;font-size:1.05rem}
+.pcard.before{border-top:4px solid #9aa6b2}
+.pcard.after{border-top:4px solid var(--ok)}
+.pcard ul{margin:0;padding-left:18px}
+.pcard li{margin:4px 0}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px 18px;position:relative}
+.step .n{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:700;margin-bottom:10px}
+.step h3{margin:0 0 6px;font-size:1rem}
+.step p{margin:0;color:var(--sub);font-size:.9rem}
+.step .k{display:inline-block;margin-top:10px;font-size:.75rem;background:#eef2f6;border-radius:3px;padding:2px 7px;color:var(--navy);font-weight:700}
+
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.feat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px}
+.feat .ic{font-size:1.4rem}
+.feat h3{margin:6px 0 6px;font-size:1rem}
+.feat p{margin:0;color:var(--sub);font-size:.9rem}
+
+.shot{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.shot img{display:block;width:100%;height:auto}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.85rem;color:var(--sub);padding:12px 16px;border-top:1px solid var(--line)}
+.legend i{display:inline-block;width:14px;height:10px;border:2px solid;margin-right:6px;vertical-align:-1px}
+
+.install{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+.ol{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 22px}
+.ol li{margin:12px 0}
+code{background:#eef2f6;border-radius:3px;padding:1px 6px;font-size:.9em}
+.req{background:var(--navy);color:#e6eef4;border-radius:10px;padding:22px}
+.req h3{margin:0 0 10px;color:#fff;font-size:1.02rem}
+.req ul{margin:0;padding-left:18px}
+.req li{margin:5px 0;font-size:.92rem}
+.dl{margin-top:16px}
+
+.notes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.note{background:#fff8e6;border:1px solid #f0dca6;border-radius:10px;padding:18px 20px}
+.note.sec{background:#fdeeee;border-color:#f1c4c1}
+.note h3{margin:0 0 6px;font-size:1rem}
+.note ul{margin:0;padding-left:18px;font-size:.92rem}
+
+footer{background:var(--navy);color:#a9c0d0;font-size:.82rem;padding:26px 0}
+footer p{margin:4px 0}
+
+@media (max-width:900px){
+  .hero{background:var(--navy)}
+  .hero-grid,.problem,.install,.notes{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .features{grid-template-columns:1fr 1fr}
+  h1{font-size:1.85rem}
+  nav{display:none}
+}
+@media (max-width:560px){
+  .steps,.features{grid-template-columns:1fr}
+  .wrap{padding:0 16px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">ImageKoTranslator<span>v1.1</span></div>
+    <nav aria-label="페이지 이동">
+      <a href="#compare">결과 비교</a><a href="#how">작동 방식</a><a href="#features">기능</a><a href="#install">설치</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Windows 설치형 · 무료 OCR · 무료 번역</span>
+      <h1>영문 지도·도표,<br>글자만 한글로.</h1>
+      <p class="lead">ISW·싱크탱크의 영문 지도, 도표, 인포그래픽, PDF 페이지에서 <b>영어만 찾아 한글로 바꾸고</b> 나머지는 원본 그대로 둡니다. 자동 번역 뒤 사람이 검수·수정하는 단계를 넣어 보고서에 바로 쓸 수 있는 품질을 만듭니다.</p>
+      <div class="btns">
+        <a class="btn primary" href="ImageKoTranslator_v1.1.1.zip" download>⬇ 프로그램 내려받기 (52KB)</a>
+        <a class="btn ghost" href="#how">작동 방식 보기</a>
+        <a class="btn ghost" href="https://github.com/bspark1982-source/1021/tree/main/source" target="_blank" rel="noopener">소스 코드</a>
+      </div>
+      <p class="meta">Windows 10/11 · Python 3.10~3.14 · 설치 후 글자 인식은 오프라인 동작</p>
+    </div>
+
+    <div class="compare-card" id="compare">
+      <div class="tabs" role="tablist" aria-label="예시 선택">
+        <button role="tab" aria-selected="true" data-k="overview">중동 개관도</button>
+        <button role="tab" aria-selected="false" data-k="taiz">타이즈 전황도</button>
+        <button role="tab" aria-selected="false" data-k="houthi">후티 공격 지도</button>
+      </div>
+      <div class="ba" id="ba" style="--pos:50%">
+        <img id="imgAfter" src="img/overview_after.jpg" alt="한글화 결과 이미지" width="1133" height="906">
+        <img id="imgBefore" class="before" src="img/overview_before.jpg" alt="영문 원본 이미지" width="1133" height="906">
+        <div class="handle" aria-hidden="true"></div>
+        <span class="tag l">원본</span><span class="tag r">한글화</span>
+        <input type="range" min="0" max="100" value="50" id="baRange" aria-label="원본과 한글화 결과 비교 위치">
+      </div>
+      <div class="cap">가운데 막대를 좌우로 끌어 비교 · 원본: ISW·AEI Critical Threats Project, 2026.10.20 (시연용 인용, 저작권은 원저작자에 있음)</div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>왜 만들었나</h2>
+    <p class="sec-sub">ISW 일일 보고서와 싱크탱크 자료의 지도·도표를 매일 한글 보고서에 넣어야 하는 실무 문제에서 출발했습니다.</p>
+    <div class="problem">
+      <div class="pcard before">
+        <h3>기존 방식</h3>
+        <ul>
+          <li>지도 속 영어를 하나하나 옮겨 적고 번역</li>
+          <li>그림 편집 프로그램으로 글자를 지우고 한글을 다시 얹음</li>
+          <li>지명·부대명 표기가 작업자·날짜마다 달라짐</li>
+          <li>번역 앱은 사진 위에 번역문을 덮어 보여 줄 뿐, 보고서용 이미지로 저장·수정이 어려움</li>
+        </ul>
+      </div>
+      <div class="pcard after">
+        <h3>ImageKoTranslator</h3>
+        <ul>
+          <li>글자 위치·크기·색을 자동으로 찾아 같은 자리에 한글로 교체</li>
+          <li>그래프·표의 숫자, 축척, 로고는 자동 보호(지우지 않음)</li>
+          <li>용어집으로 지명·부대명 표기를 고정해 매일 같은 표기 유지</li>
+          <li>사람이 번역문·글자 크기·위치를 고친 뒤 PNG·JPG·PDF로 저장</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how" style="padding-top:0">
+  <div class="wrap">
+    <h2>작동 방식</h2>
+    <p class="sec-sub">자동으로 80%를 처리하고, 남은 20%는 사람이 빠르게 다듬는 구조입니다.</p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>열기</h3><p>이미지·PDF를 열거나 화면 캡처를 바로 붙여넣기. PDF는 페이지를 골라 작업.</p><span class="k">Ctrl+O · Ctrl+Shift+V</span></div>
+      <div class="step"><div class="n">2</div><h3>글자 인식</h3><p>PP-OCRv6 기반 무료 OCR이 영어 줄을 찾고, 문장·문단·범례 항목 단위로 묶음. 기울어진 해협·바다 이름도 각도까지 인식.</p><span class="k">F5</span></div>
+      <div class="step"><div class="n">3</div><h3>번역</h3><p>용어집을 먼저 적용하고 무료 번역기로 문단 단위 번역. 막히면 파파고·DeepL 웹 결과를 붙여넣기.</p><span class="k">F6</span></div>
+      <div class="step"><div class="n">4</div><h3>검수·저장</h3><p>번역문, 글자 크기·색, 위치를 고치고 원본/결과를 비교한 뒤 이미지나 PDF로 저장.</p><span class="k">Space · Ctrl+S</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="features" style="padding-top:0">
+  <div class="wrap">
+    <h2>주요 기능</h2>
+    <p class="sec-sub">실제 ISW 지도로 시험하며 다듬은 기능들입니다.</p>
+    <div class="features">
+      <div class="feat"><div class="ic">🎯</div><h3>원본 스타일 유지</h3><p>배경색·글자색·크기·굵기를 원본에서 추정해 적용. 범례 글자 크기는 항목끼리 통일.</p></div>
+      <div class="feat"><div class="ic">🔢</div><h3>숫자·로고 보호</h3><p>그래프·표 수치, 축척, 방위표, ISW·CT 로고 글자는 지우지도 번역하지도 않음.</p></div>
+      <div class="feat"><div class="ic">🧭</div><h3>지도 전용 처리</h3><p>기울어진 글자는 같은 각도로 교체, 도시 점(●)은 남기고 지명만 교체, 범례는 기호 옆 왼쪽 정렬.</p></div>
+      <div class="feat"><div class="ic">📖</div><h3>용어집</h3><p>하르키우·후티 반군 등 표기를 고정. 고친 번역은 버튼 하나로 용어집에 쌓여 다음부터 자동 적용.</p></div>
+      <div class="feat"><div class="ic">✍️</div><h3>수작업 편집</h3><p>상자 끌어 이동·크기 조절, 병합·분할, 놓친 영역 추가, 배경색 스포이드, 되돌리기.</p></div>
+      <div class="feat"><div class="ic">📄</div><h3>PDF 지원</h3><p>본문 글자층은 원래 크기·색 그대로, 페이지 속 지도 글자는 OCR로. 여러 쪽 일괄 처리, 원본 뒤 대조 페이지 삽입.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <h2>편집 화면</h2>
+    <p class="sec-sub">왼쪽에서 상자를 직접 다루고, 오른쪽에서 원문·번역을 검수합니다.</p>
+    <div class="shot">
+      <img src="img/app_screen.jpg" alt="ImageKoTranslator 편집 화면: 왼쪽 지도 위 블록 상자, 오른쪽 원문·번역 목록과 편집칸" loading="lazy" width="1600" height="950">
+      <div class="legend">
+        <span><i style="border-color:#1ea050"></i>번역 완료</span>
+        <span><i style="border-color:#eb8200"></i>번역 전</span>
+        <span><i style="border-color:#8c8c8c;border-style:dotted"></i>숫자·로고 등 보호</span>
+        <span><i style="border-color:#1e6ee6"></i>선택됨</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install" style="padding-top:0">
+  <div class="wrap">
+    <h2>설치와 실행</h2>
+    <p class="sec-sub">처음 한 번만 설치하면 이후에는 더블클릭으로 실행합니다.</p>
+    <div class="install">
+      <ol class="ol">
+        <li><b>내려받아 압축 풀기</b> — zip 안에서 바로 실행하지 말고 먼저 풀기</li>
+        <li><b><code>install</code> 더블클릭</b> — 필요한 패키지를 <code>.venv</code> 폴더에 설치 (3~10분). 지원 버전 파이썬을 자동으로 찾아 사용</li>
+        <li><b><code>run</code> 더블클릭</b> — 프로그램 실행</li>
+        <li><b>열기 → F5(인식) → 검수 → Ctrl+S(저장)</b></li>
+      </ol>
+      <div class="req">
+        <h3>필요 환경</h3>
+        <ul>
+          <li>Windows 10 / 11 (64비트)</li>
+          <li>Python 3.10 ~ 3.14 (3.15만 있으면 install이 3.13 설치를 시도)</li>
+          <li>설치 시 인터넷 필요, 글자 인식은 오프라인</li>
+          <li>자동 번역 사용 시 인터넷 필요</li>
+        </ul>
+        <div class="dl"><a class="btn primary" href="ImageKoTranslator_v1.1.1.zip" download>⬇ ImageKoTranslator v1.1.1</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="notes">
+      <div class="note">
+        <h3>알려진 한계</h3>
+        <ul>
+          <li>곡선을 따라 휘어진 글자, 글자 간격을 넓게 띄운 세로 글자는 자동 인식이 안 됨 → "상자 추가"로 직접 입력</li>
+          <li>지형 음영 위 지명은 배경색 사각형으로 덮임 (내용 전달 우선 설계)</li>
+          <li>무료 번역기는 품질·안정성이 일정하지 않음 → 검수 단계 필수</li>
+        </ul>
+      </div>
+      <div class="note sec">
+        <h3>보안 주의</h3>
+        <ul>
+          <li>자동 번역을 켜면 문장이 외부 번역 서버로 전송됨</li>
+          <li>공개 자료(ISW·싱크탱크)에만 사용하고, 비공개 자료는 "자동 번역 안 함"으로 두고 내부 절차에 따라 번역</li>
+          <li>글자 인식(OCR)은 PC 안에서만 처리</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>ImageKoTranslator — 정책제도 3기 AI 실무 과정 바이브코딩 프로젝트</p>
+    <p>사용 기술: Python · PySide6 · RapidOCR(PP-OCRv6, ONNX) · PyMuPDF · Pillow · 소스: <a href="https://github.com/bspark1982-source/1021/tree/main/source">GitHub</a></p>
+    <p>예시 이미지 원본: Institute for the Study of War &amp; AEI's Critical Threats Project (2026.10.20). 기능 시연 목적의 인용이며 저작권은 원저작자에 있음.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var ba=document.getElementById('ba'), r=document.getElementById('baRange');
+  var a=document.getElementById('imgAfter'), b=document.getElementById('imgBefore');
+  var sizes={overview:[1133,906],taiz:[980,1225],houthi:[980,1225]};
+  r.addEventListener('input',function(){ba.style.setProperty('--pos',r.value+'%');});
+  document.querySelectorAll('.tabs button').forEach(function(t){
+    t.addEventListener('click',function(){
+      document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-selected','false');});
+      t.setAttribute('aria-selected','true');
+      var k=t.getAttribute('data-k'), s=sizes[k];
+      a.width=b.width=s[0]; a.height=b.height=s[1];
+      a.src='img/'+k+'_after.jpg'; b.src='img/'+k+'_before.jpg';
+      r.value=50; ba.style.setProperty('--pos','50%');
+    });
+  });
+})();
+</script>
+</body>
+</html>
